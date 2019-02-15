@@ -1,0 +1,808 @@
+%% INITIALIZE
+
+cd('C:\Users\Quentin\Google Drive\TU Delft\Thesis (1)\Analysis\');
+clc;
+clearvars;
+
+filn                = [pwd '/CodedAnswers.xlsx'];
+
+% Retrieve questions
+
+[QuestionID, ~] = xlsread(filn,1,'A1:DE1');
+[Distance, ~]   = xlsread(filn,1,'A2:DE2');
+[Direction, ~]  = xlsread(filn,1,'A3:DE3');
+[EyeContact, ~] = xlsread(filn,1,'A4:DE4');
+[GroupSize, ~]  = xlsread(filn,1,'A5:DE5');
+[Context, ~]    = xlsread(filn,1,'A6:DE6');
+
+[RespondentID, ~]=xlsread(filn,1,'A7:A395');
+[Gender, ~]     = xlsread(filn,1,'DB7:DB395');
+[Age, ~]        = xlsread(filn,1,'DC7:DC395');
+[~, Origin]     = xlsread(filn,1,'DD7:DD395');
+
+% Extract manoeuvers
+
+[Manoeuvers.Test, ~]      = xlsread(filn,1,'B7:AO395');
+
+for i=1:389
+    k=1;
+    for j=1:20
+        Manoeuvers.Bike.All.Direction(i,j)  =   Manoeuvers.Test(i,k);
+        k=k+2;
+    end
+end
+
+for i=1:389
+    k=2;
+    for j=1:20
+        Manoeuvers.Bike.All.Speed(i,j)  =   Manoeuvers.Test(i,k);
+        k=k+2;
+    end
+end
+
+[Manoeuvers.Test, ~]      = xlsread(filn,1,'AP7:CC395');
+
+for i=1:389
+    k=1;
+    for j=1:20
+        Manoeuvers.Pedestrian.All.Direction(i,j)  =   Manoeuvers.Test(i,k);
+        k=k+2;
+    end
+end
+
+for i=1:389
+    k=2;
+    for j=1:20
+        Manoeuvers.Pedestrian.All.Speed(i,j)  =   Manoeuvers.Test(i,k);
+        k=k+2;
+    end
+end
+
+clear i j k
+Manoeuvers = rmfield(Manoeuvers,'Test');
+
+%% MANOEUVERS - Bike - All
+
+Manoeuvers.Bike.All.Tables=zeros(20,9);
+Manoeuvers.Bike.Women.Tables=zeros(20,9);
+Manoeuvers.Bike.Men.Tables=zeros(20,9);
+Manoeuvers.Bike.Young.Tables=zeros(20,9);
+Manoeuvers.Bike.Old.Tables=zeros(20,9);
+Manoeuvers.Bike.NL.Tables=zeros(20,9);
+Manoeuvers.Bike.CA.Tables=zeros(20,9);
+
+for i=1:20
+    for j=1:389
+        % left & accelerate
+        if Manoeuvers.Bike.All.Direction(j,i)==1 && Manoeuvers.Bike.All.Speed(j,i)==1
+            Manoeuvers.Bike.All.Tables(i,1)=Manoeuvers.Bike.All.Tables(i,1)+1;
+            switch Gender(j)
+                case 1
+                    Manoeuvers.Bike.Women.Tables(i,1)=Manoeuvers.Bike.Women.Tables(i,1)+1;
+                case 2
+                    Manoeuvers.Bike.Men.Tables(i,1)=Manoeuvers.Bike.Men.Tables(i,1)+1;
+            end
+            if Age(j)<30
+                Manoeuvers.Bike.Young.Tables(i,1)=Manoeuvers.Bike.Young.Tables(i,1)+1;
+            else
+                Manoeuvers.Bike.Old.Tables(i,1)=Manoeuvers.Bike.Old.Tables(i,1)+1;
+            end
+            if strcmp(Origin(j),'NL')==1
+                Manoeuvers.Bike.NL.Tables(i,1)=Manoeuvers.Bike.NL.Tables(i,1)+1;
+            end
+            if strcmp(Origin(j),'CA')==1
+                Manoeuvers.Bike.CA.Tables(i,1)=Manoeuvers.Bike.CA.Tables(i,1)+1;
+            end
+        % right and accelerate
+        elseif Manoeuvers.Bike.All.Direction(j,i)==2 && Manoeuvers.Bike.All.Speed(j,i)==1
+            Manoeuvers.Bike.All.Tables(i,2)=Manoeuvers.Bike.All.Tables(i,2)+1;
+            switch Gender(j)
+                case 1
+                    Manoeuvers.Bike.Women.Tables(i,2)=Manoeuvers.Bike.Women.Tables(i,2)+1;
+                case 2
+                    Manoeuvers.Bike.Men.Tables(i,2)=Manoeuvers.Bike.Men.Tables(i,2)+1;
+            end
+            if Age(j)<30
+                Manoeuvers.Bike.Young.Tables(i,2)=Manoeuvers.Bike.Young.Tables(i,2)+1;
+            else
+                Manoeuvers.Bike.Old.Tables(i,2)=Manoeuvers.Bike.Old.Tables(i,2)+1;
+            end
+            if strcmp(Origin(j),'NL')==1
+                Manoeuvers.Bike.NL.Tables(i,2)=Manoeuvers.Bike.NL.Tables(i,2)+1;
+            end
+            if strcmp(Origin(j),'CA')==1
+                Manoeuvers.Bike.CA.Tables(i,2)=Manoeuvers.Bike.CA.Tables(i,2)+1;
+            end
+        % straight and accelerate
+        elseif Manoeuvers.Bike.All.Direction(j,i)==3 && Manoeuvers.Bike.All.Speed(j,i)==1
+            Manoeuvers.Bike.All.Tables(i,3)=Manoeuvers.Bike.All.Tables(i,3)+1;
+            switch Gender(j)
+                case 1
+                    Manoeuvers.Bike.Women.Tables(i,3)=Manoeuvers.Bike.Women.Tables(i,3)+1;
+                case 2
+                    Manoeuvers.Bike.Men.Tables(i,3)=Manoeuvers.Bike.Men.Tables(i,3)+1;
+            end
+            if Age(j)<30
+                Manoeuvers.Bike.Young.Tables(i,3)=Manoeuvers.Bike.Young.Tables(i,3)+1;
+            else
+                Manoeuvers.Bike.Old.Tables(i,3)=Manoeuvers.Bike.Old.Tables(i,3)+1;
+            end
+            if strcmp(Origin(j),'NL')==1
+                Manoeuvers.Bike.NL.Tables(i,3)=Manoeuvers.Bike.NL.Tables(i,3)+1;
+            end
+            if strcmp(Origin(j),'CA')==1
+                Manoeuvers.Bike.CA.Tables(i,3)=Manoeuvers.Bike.CA.Tables(i,3)+1;
+            end
+        % left and slow
+        elseif Manoeuvers.Bike.All.Direction(j,i)==1 && Manoeuvers.Bike.All.Speed(j,i)==2
+            Manoeuvers.Bike.All.Tables(i,4)=Manoeuvers.Bike.All.Tables(i,4)+1;
+            switch Gender(j)
+                case 1
+                    Manoeuvers.Bike.Women.Tables(i,4)=Manoeuvers.Bike.Women.Tables(i,4)+1;
+                case 2
+                    Manoeuvers.Bike.Men.Tables(i,4)=Manoeuvers.Bike.Men.Tables(i,4)+1;
+            end
+            if Age(j)<30
+                Manoeuvers.Bike.Young.Tables(i,4)=Manoeuvers.Bike.Young.Tables(i,4)+1;
+            else
+                Manoeuvers.Bike.Old.Tables(i,4)=Manoeuvers.Bike.Old.Tables(i,4)+1;
+            end
+            if strcmp(Origin(j),'NL')==1
+                Manoeuvers.Bike.NL.Tables(i,4)=Manoeuvers.Bike.NL.Tables(i,4)+1;
+            end
+            if strcmp(Origin(j),'CA')==1
+                Manoeuvers.Bike.CA.Tables(i,4)=Manoeuvers.Bike.CA.Tables(i,4)+1;
+            end
+        % right & slow
+        elseif Manoeuvers.Bike.All.Direction(j,i)==2 && Manoeuvers.Bike.All.Speed(j,i)==2
+            Manoeuvers.Bike.All.Tables(i,5)=Manoeuvers.Bike.All.Tables(i,5)+1;
+            switch Gender(j)
+                case 1
+                    Manoeuvers.Bike.Women.Tables(i,5)=Manoeuvers.Bike.Women.Tables(i,5)+1;
+                case 2
+                    Manoeuvers.Bike.Men.Tables(i,5)=Manoeuvers.Bike.Men.Tables(i,5)+1;
+            end
+            if Age(j)<30
+                Manoeuvers.Bike.Young.Tables(i,5)=Manoeuvers.Bike.Young.Tables(i,5)+1;
+            else
+                Manoeuvers.Bike.Old.Tables(i,5)=Manoeuvers.Bike.Old.Tables(i,5)+1;
+            end
+            if strcmp(Origin(j),'NL')==1
+                Manoeuvers.Bike.NL.Tables(i,5)=Manoeuvers.Bike.NL.Tables(i,5)+1;
+            end
+            if strcmp(Origin(j),'CA')==1
+                Manoeuvers.Bike.CA.Tables(i,5)=Manoeuvers.Bike.CA.Tables(i,5)+1;
+            end
+        % straight & slow
+        elseif Manoeuvers.Bike.All.Direction(j,i)==3 && Manoeuvers.Bike.All.Speed(j,i)==2
+            Manoeuvers.Bike.All.Tables(i,6)=Manoeuvers.Bike.All.Tables(i,6)+1;
+            switch Gender(j)
+                case 1
+                    Manoeuvers.Bike.Women.Tables(i,6)=Manoeuvers.Bike.Women.Tables(i,6)+1;
+                case 2
+                    Manoeuvers.Bike.Men.Tables(i,6)=Manoeuvers.Bike.Men.Tables(i,6)+1;
+            end
+            if Age(j)<30
+                Manoeuvers.Bike.Young.Tables(i,6)=Manoeuvers.Bike.Young.Tables(i,6)+1;
+            else
+                Manoeuvers.Bike.Old.Tables(i,6)=Manoeuvers.Bike.Old.Tables(i,6)+1;
+            end
+            if strcmp(Origin(j),'NL')==1
+                Manoeuvers.Bike.NL.Tables(i,6)=Manoeuvers.Bike.NL.Tables(i,6)+1;
+            end
+            if strcmp(Origin(j),'CA')==1
+                Manoeuvers.Bike.CA.Tables(i,6)=Manoeuvers.Bike.CA.Tables(i,6)+1;
+            end
+        % left & steady
+        elseif Manoeuvers.Bike.All.Direction(j,i)==1 && Manoeuvers.Bike.All.Speed(j,i)==3
+            Manoeuvers.Bike.All.Tables(i,7)=Manoeuvers.Bike.All.Tables(i,7)+1;
+            switch Gender(j)
+                case 1
+                    Manoeuvers.Bike.Women.Tables(i,7)=Manoeuvers.Bike.Women.Tables(i,7)+1;
+                case 2
+                    Manoeuvers.Bike.Men.Tables(i,7)=Manoeuvers.Bike.Men.Tables(i,7)+1;
+            end
+            if Age(j)<30
+                Manoeuvers.Bike.Young.Tables(i,7)=Manoeuvers.Bike.Young.Tables(i,7)+1;
+            else
+                Manoeuvers.Bike.Old.Tables(i,7)=Manoeuvers.Bike.Old.Tables(i,7)+1;
+            end
+            if strcmp(Origin(j),'NL')==1
+                Manoeuvers.Bike.NL.Tables(i,7)=Manoeuvers.Bike.NL.Tables(i,7)+1;
+            end
+            if strcmp(Origin(j),'CA')==1
+                Manoeuvers.Bike.CA.Tables(i,7)=Manoeuvers.Bike.CA.Tables(i,7)+1;
+            end
+        % right & steady
+        elseif Manoeuvers.Bike.All.Direction(j,i)==2 && Manoeuvers.Bike.All.Speed(j,i)==3
+            Manoeuvers.Bike.All.Tables(i,8)=Manoeuvers.Bike.All.Tables(i,8)+1;
+            switch Gender(j)
+                case 1
+                    Manoeuvers.Bike.Women.Tables(i,8)=Manoeuvers.Bike.Women.Tables(i,8)+1;
+                case 2
+                    Manoeuvers.Bike.Men.Tables(i,8)=Manoeuvers.Bike.Men.Tables(i,8)+1;
+            end
+            if Age(j)<30
+                Manoeuvers.Bike.Young.Tables(i,8)=Manoeuvers.Bike.Young.Tables(i,8)+1;
+            else
+                Manoeuvers.Bike.Old.Tables(i,8)=Manoeuvers.Bike.Old.Tables(i,8)+1;
+            end
+            if strcmp(Origin(j),'NL')==1
+                Manoeuvers.Bike.NL.Tables(i,8)=Manoeuvers.Bike.NL.Tables(i,8)+1;
+            end
+            if strcmp(Origin(j),'CA')==1
+                Manoeuvers.Bike.CA.Tables(i,8)=Manoeuvers.Bike.CA.Tables(i,8)+1;
+            end
+        % straight & steady
+        else
+            Manoeuvers.Bike.All.Tables(i,9)=Manoeuvers.Bike.All.Tables(i,9)+1;
+            switch Gender(j)
+                case 1
+                    Manoeuvers.Bike.Women.Tables(i,9)=Manoeuvers.Bike.Women.Tables(i,9)+1;
+                case 2
+                    Manoeuvers.Bike.Men.Tables(i,9)=Manoeuvers.Bike.Men.Tables(i,9)+1;
+            end
+            if Age(j)<30
+                Manoeuvers.Bike.Young.Tables(i,9)=Manoeuvers.Bike.Young.Tables(i,9)+1;
+            else
+                Manoeuvers.Bike.Old.Tables(i,9)=Manoeuvers.Bike.Old.Tables(i,9)+1;
+            end
+            if strcmp(Origin(j),'NL')==1
+                Manoeuvers.Bike.NL.Tables(i,9)=Manoeuvers.Bike.NL.Tables(i,9)+1;
+            end
+            if strcmp(Origin(j),'CA')==1
+                Manoeuvers.Bike.CA.Tables(i,9)=Manoeuvers.Bike.CA.Tables(i,9)+1;
+            end
+        end
+    end
+end
+
+Manoeuvers.Bike.All.Tables=Manoeuvers.Bike.All.Tables*100/389;
+Manoeuvers.Bike.All.Tables(:,[1 3 2 7 9 8 4 6 5]);
+
+Manoeuvers.Bike.Women.Tables=Manoeuvers.Bike.Women.Tables*100/174;
+Manoeuvers.Bike.Women.Tables(:,[1 3 2 7 9 8 4 6 5]);
+
+Manoeuvers.Bike.Men.Tables=Manoeuvers.Bike.Men.Tables*100/215;
+Manoeuvers.Bike.Men.Tables(:,[1 3 2 7 9 8 4 6 5]);
+
+Manoeuvers.Bike.Young.Tables=Manoeuvers.Bike.Young.Tables*100/191;
+Manoeuvers.Bike.Young.Tables(:,[1 3 2 7 9 8 4 6 5]);
+
+Manoeuvers.Bike.Old.Tables=Manoeuvers.Bike.Old.Tables*100/198;
+Manoeuvers.Bike.Old.Tables(:,[1 3 2 7 9 8 4 6 5]);
+
+Manoeuvers.Bike.NL.Tables=Manoeuvers.Bike.NL.Tables*100/97;
+Manoeuvers.Bike.NL.Tables(:,[1 3 2 7 9 8 4 6 5]);
+
+Manoeuvers.Bike.CA.Tables=Manoeuvers.Bike.CA.Tables*100/79;
+Manoeuvers.Bike.CA.Tables(:,[1 3 2 7 9 8 4 6 5]);
+
+figure
+for i=1:20
+    subplot(4,5,i)
+    x = [1 3];
+    y = [1 3];
+    image(x,y,transpose(reshape(Manoeuvers.Bike.All.Tables(i,:),[3,3])))
+    l=1;
+    for j=1:3
+        for k=1:3
+            text(k,j,num2str(Manoeuvers.Bike.All.Tables(i,l),'%.0f'),'Color','black','FontName','rockwell','FontSize',12,'HorizontalAlignment','center');%,'FontWeight','bold');
+            l=l+1;
+        end
+    end
+    colormap(flipud(bone))
+    %colorbar
+    axis off
+    box on
+    title(num2str(i),'FontName','rockwell','FontSize',14,'FontWeight','bold')
+end
+suptitle('Bike - All (n=389)','FontName','rockwell')
+print('Bike - All (n=389)','-bestfit','-dpdf')
+
+figure
+for i=1:20
+    subplot(4,5,i)
+    x = [1 3];
+    y = [1 3];
+    image(x,y,transpose(reshape(Manoeuvers.Bike.Women.Tables(i,:),[3,3])))
+    l=1;
+    for j=1:3
+        for k=1:3
+            text(k,j,num2str(Manoeuvers.Bike.Women.Tables(i,l),'%.0f'),'Color','black','FontName','rockwell','FontSize',12,'HorizontalAlignment','center');%,'FontWeight','bold');
+            l=l+1;
+        end
+    end
+    colormap(flipud(bone))
+    %colorbar
+    axis off
+    box on
+    title(num2str(i),'FontName','rockwell','FontSize',14,'FontWeight','bold')
+end
+suptitle('Bike - Women (n=174)','FontName','rockwell')
+print('Bike - Women (n=174)','-bestfit','-dpdf')
+
+figure
+for i=1:20
+    subplot(4,5,i)
+    x = [1 3];
+    y = [1 3];
+    image(x,y,transpose(reshape(Manoeuvers.Bike.Men.Tables(i,:),[3,3])))
+    l=1;
+    for j=1:3
+        for k=1:3
+            text(k,j,num2str(Manoeuvers.Bike.Men.Tables(i,l),'%.0f'),'Color','black','FontName','rockwell','FontSize',12,'HorizontalAlignment','center');%,'FontWeight','bold');
+            l=l+1;
+        end
+    end
+    colormap(flipud(bone))
+    %colorbar
+    axis off
+    box on
+    title(num2str(i),'FontName','rockwell','FontSize',14,'FontWeight','bold')
+end
+suptitle('Bike - Men (n=215)','FontName','rockwell')
+print('Bike - Men (n=215)','-bestfit','-dpdf')
+
+figure
+for i=1:20
+    subplot(4,5,i)
+    x = [1 3];
+    y = [1 3];
+    image(x,y,transpose(reshape(Manoeuvers.Bike.Young.Tables(i,:),[3,3])))
+    l=1;
+    for j=1:3
+        for k=1:3
+            text(k,j,num2str(Manoeuvers.Bike.Young.Tables(i,l),'%.0f'),'Color','black','FontName','rockwell','FontSize',12,'HorizontalAlignment','center');%,'FontWeight','bold');
+            l=l+1;
+        end
+    end
+    colormap(flipud(bone))
+    %colorbar
+    axis off
+    box on
+    title(num2str(i),'FontName','rockwell','FontSize',14,'FontWeight','bold')
+end
+suptitle('Bike - < 30y.o. (n=191)','FontName','rockwell')
+print('Bike - under 30yo (n=191)','-bestfit','-dpdf')
+
+figure
+for i=1:20
+    subplot(4,5,i)
+    x = [1 3];
+    y = [1 3];
+    image(x,y,transpose(reshape(Manoeuvers.Bike.Old.Tables(i,:),[3,3])))
+    l=1;
+    for j=1:3
+        for k=1:3
+            text(k,j,num2str(Manoeuvers.Bike.Old.Tables(i,l),'%.0f'),'Color','black','FontName','rockwell','FontSize',12,'HorizontalAlignment','center');%,'FontWeight','bold');
+            l=l+1;
+        end
+    end
+    colormap(flipud(bone))
+    %colorbar
+    axis off
+    box on
+    title(num2str(i),'FontName','rockwell','FontSize',14,'FontWeight','bold')
+end
+suptitle('Bike - >= 30y.o. (n=198)','FontName','rockwell')
+print('Bike - over 30yo (n=198)','-bestfit','-dpdf')
+
+figure
+for i=1:20
+    subplot(4,5,i)
+    x = [1 3];
+    y = [1 3];
+    image(x,y,transpose(reshape(Manoeuvers.Bike.NL.Tables(i,:),[3,3])))
+    l=1;
+    for j=1:3
+        for k=1:3
+            text(k,j,num2str(Manoeuvers.Bike.NL.Tables(i,l),'%.0f'),'Color','black','FontName','rockwell','FontSize',12,'HorizontalAlignment','center');%,'FontWeight','bold');
+            l=l+1;
+        end
+    end
+    colormap(flipud(bone))
+    %colorbar
+    axis off
+    box on
+    title(num2str(i),'FontName','rockwell','FontSize',14,'FontWeight','bold')
+end
+suptitle('Bike - The Netherlands (n=97)','FontName','rockwell')
+print('Bike - The Netherlands (n=97)','-bestfit','-dpdf')
+
+figure
+for i=1:20
+    subplot(4,5,i)
+    x = [1 3];
+    y = [1 3];
+    image(x,y,transpose(reshape(Manoeuvers.Bike.CA.Tables(i,:),[3,3])))
+    l=1;
+    for j=1:3
+        for k=1:3
+            text(k,j,num2str(Manoeuvers.Bike.CA.Tables(i,l),'%.0f'),'Color','black','FontName','rockwell','FontSize',12,'HorizontalAlignment','center');%,'FontWeight','bold');
+            l=l+1;
+        end
+    end
+    colormap(flipud(bone))
+    %colorbar
+    axis off
+    box on
+    title(num2str(i),'FontName','rockwell','FontSize',14,'FontWeight','bold')
+end
+suptitle('Bike - Canada (n=79)','FontName','rockwell')
+print('Bike - Canada (n=79)','-bestfit','-dpdf')
+
+%% MANOEUVERS - Pedestrian - All
+
+Manoeuvers.Pedestrian.All.Tables=zeros(20,9);
+Manoeuvers.Pedestrian.Women.Tables=zeros(20,9);
+Manoeuvers.Pedestrian.Men.Tables=zeros(20,9);
+Manoeuvers.Pedestrian.Young.Tables=zeros(20,9);
+Manoeuvers.Pedestrian.Old.Tables=zeros(20,9);
+Manoeuvers.Pedestrian.NL.Tables=zeros(20,9);
+Manoeuvers.Pedestrian.CA.Tables=zeros(20,9);
+
+for i=1:20
+    for j=1:389
+        % left & accelerate
+        if Manoeuvers.Pedestrian.All.Direction(j,i)==1 && Manoeuvers.Pedestrian.All.Speed(j,i)==1
+            Manoeuvers.Pedestrian.All.Tables(i,1)=Manoeuvers.Pedestrian.All.Tables(i,1)+1;
+            switch Gender(j)
+                case 1
+                    Manoeuvers.Pedestrian.Women.Tables(i,1)=Manoeuvers.Pedestrian.Women.Tables(i,1)+1;
+                case 2
+                    Manoeuvers.Pedestrian.Men.Tables(i,1)=Manoeuvers.Pedestrian.Men.Tables(i,1)+1;
+            end
+            if Age(j)<30
+                Manoeuvers.Pedestrian.Young.Tables(i,1)=Manoeuvers.Pedestrian.Young.Tables(i,1)+1;
+            else
+                Manoeuvers.Pedestrian.Old.Tables(i,1)=Manoeuvers.Pedestrian.Old.Tables(i,1)+1;
+            end
+            if strcmp(Origin(j),'NL')==1
+                Manoeuvers.Pedestrian.NL.Tables(i,1)=Manoeuvers.Pedestrian.NL.Tables(i,1)+1;
+            end
+            if strcmp(Origin(j),'CA')==1
+                Manoeuvers.Pedestrian.CA.Tables(i,1)=Manoeuvers.Pedestrian.CA.Tables(i,1)+1;
+            end
+        % right and accelerate
+        elseif Manoeuvers.Pedestrian.All.Direction(j,i)==2 && Manoeuvers.Pedestrian.All.Speed(j,i)==1
+            Manoeuvers.Pedestrian.All.Tables(i,2)=Manoeuvers.Pedestrian.All.Tables(i,2)+1;
+            switch Gender(j)
+                case 1
+                    Manoeuvers.Pedestrian.Women.Tables(i,2)=Manoeuvers.Pedestrian.Women.Tables(i,2)+1;
+                case 2
+                    Manoeuvers.Pedestrian.Men.Tables(i,2)=Manoeuvers.Pedestrian.Men.Tables(i,2)+1;
+            end
+            if Age(j)<30
+                Manoeuvers.Pedestrian.Young.Tables(i,2)=Manoeuvers.Pedestrian.Young.Tables(i,2)+1;
+            else
+                Manoeuvers.Pedestrian.Old.Tables(i,2)=Manoeuvers.Pedestrian.Old.Tables(i,2)+1;
+            end
+            if strcmp(Origin(j),'NL')==1
+                Manoeuvers.Pedestrian.NL.Tables(i,2)=Manoeuvers.Pedestrian.NL.Tables(i,2)+1;
+            end
+            if strcmp(Origin(j),'CA')==1
+                Manoeuvers.Pedestrian.CA.Tables(i,2)=Manoeuvers.Pedestrian.CA.Tables(i,2)+1;
+            end
+        % straight and accelerate
+        elseif Manoeuvers.Pedestrian.All.Direction(j,i)==3 && Manoeuvers.Pedestrian.All.Speed(j,i)==1
+            Manoeuvers.Pedestrian.All.Tables(i,3)=Manoeuvers.Pedestrian.All.Tables(i,3)+1;
+            switch Gender(j)
+                case 1
+                    Manoeuvers.Pedestrian.Women.Tables(i,3)=Manoeuvers.Pedestrian.Women.Tables(i,3)+1;
+                case 2
+                    Manoeuvers.Pedestrian.Men.Tables(i,3)=Manoeuvers.Pedestrian.Men.Tables(i,3)+1;
+            end
+            if Age(j)<30
+                Manoeuvers.Pedestrian.Young.Tables(i,3)=Manoeuvers.Pedestrian.Young.Tables(i,3)+1;
+            else
+                Manoeuvers.Pedestrian.Old.Tables(i,3)=Manoeuvers.Pedestrian.Old.Tables(i,3)+1;
+            end
+            if strcmp(Origin(j),'NL')==1
+                Manoeuvers.Pedestrian.NL.Tables(i,3)=Manoeuvers.Pedestrian.NL.Tables(i,3)+1;
+            end
+            if strcmp(Origin(j),'CA')==1
+                Manoeuvers.Pedestrian.CA.Tables(i,3)=Manoeuvers.Pedestrian.CA.Tables(i,3)+1;
+            end
+        % left and slow
+        elseif Manoeuvers.Pedestrian.All.Direction(j,i)==1 && Manoeuvers.Pedestrian.All.Speed(j,i)==2
+            Manoeuvers.Pedestrian.All.Tables(i,4)=Manoeuvers.Pedestrian.All.Tables(i,4)+1;
+            switch Gender(j)
+                case 1
+                    Manoeuvers.Pedestrian.Women.Tables(i,4)=Manoeuvers.Pedestrian.Women.Tables(i,4)+1;
+                case 2
+                    Manoeuvers.Pedestrian.Men.Tables(i,4)=Manoeuvers.Pedestrian.Men.Tables(i,4)+1;
+            end
+            if Age(j)<30
+                Manoeuvers.Pedestrian.Young.Tables(i,4)=Manoeuvers.Pedestrian.Young.Tables(i,4)+1;
+            else
+                Manoeuvers.Pedestrian.Old.Tables(i,4)=Manoeuvers.Pedestrian.Old.Tables(i,4)+1;
+            end
+            if strcmp(Origin(j),'NL')==1
+                Manoeuvers.Pedestrian.NL.Tables(i,4)=Manoeuvers.Pedestrian.NL.Tables(i,4)+1;
+            end
+            if strcmp(Origin(j),'CA')==1
+                Manoeuvers.Pedestrian.CA.Tables(i,4)=Manoeuvers.Pedestrian.CA.Tables(i,4)+1;
+            end
+        % right & slow
+        elseif Manoeuvers.Pedestrian.All.Direction(j,i)==2 && Manoeuvers.Pedestrian.All.Speed(j,i)==2
+            Manoeuvers.Pedestrian.All.Tables(i,5)=Manoeuvers.Pedestrian.All.Tables(i,5)+1;
+            switch Gender(j)
+                case 1
+                    Manoeuvers.Pedestrian.Women.Tables(i,5)=Manoeuvers.Pedestrian.Women.Tables(i,5)+1;
+                case 2
+                    Manoeuvers.Pedestrian.Men.Tables(i,5)=Manoeuvers.Pedestrian.Men.Tables(i,5)+1;
+            end
+            if Age(j)<30
+                Manoeuvers.Pedestrian.Young.Tables(i,5)=Manoeuvers.Pedestrian.Young.Tables(i,5)+1;
+            else
+                Manoeuvers.Pedestrian.Old.Tables(i,5)=Manoeuvers.Pedestrian.Old.Tables(i,5)+1;
+            end
+            if strcmp(Origin(j),'NL')==1
+                Manoeuvers.Pedestrian.NL.Tables(i,5)=Manoeuvers.Pedestrian.NL.Tables(i,5)+1;
+            end
+            if strcmp(Origin(j),'CA')==1
+                Manoeuvers.Pedestrian.CA.Tables(i,5)=Manoeuvers.Pedestrian.CA.Tables(i,5)+1;
+            end
+        % straight & slow
+        elseif Manoeuvers.Pedestrian.All.Direction(j,i)==3 && Manoeuvers.Pedestrian.All.Speed(j,i)==2
+            Manoeuvers.Pedestrian.All.Tables(i,6)=Manoeuvers.Pedestrian.All.Tables(i,6)+1;
+            switch Gender(j)
+                case 1
+                    Manoeuvers.Pedestrian.Women.Tables(i,6)=Manoeuvers.Pedestrian.Women.Tables(i,6)+1;
+                case 2
+                    Manoeuvers.Pedestrian.Men.Tables(i,6)=Manoeuvers.Pedestrian.Men.Tables(i,6)+1;
+            end
+            if Age(j)<30
+                Manoeuvers.Pedestrian.Young.Tables(i,6)=Manoeuvers.Pedestrian.Young.Tables(i,6)+1;
+            else
+                Manoeuvers.Pedestrian.Old.Tables(i,6)=Manoeuvers.Pedestrian.Old.Tables(i,6)+1;
+            end
+            if strcmp(Origin(j),'NL')==1
+                Manoeuvers.Pedestrian.NL.Tables(i,6)=Manoeuvers.Pedestrian.NL.Tables(i,6)+1;
+            end
+            if strcmp(Origin(j),'CA')==1
+                Manoeuvers.Pedestrian.CA.Tables(i,6)=Manoeuvers.Pedestrian.CA.Tables(i,6)+1;
+            end
+        % left & steady
+        elseif Manoeuvers.Pedestrian.All.Direction(j,i)==1 && Manoeuvers.Pedestrian.All.Speed(j,i)==3
+            Manoeuvers.Pedestrian.All.Tables(i,7)=Manoeuvers.Pedestrian.All.Tables(i,7)+1;
+            switch Gender(j)
+                case 1
+                    Manoeuvers.Pedestrian.Women.Tables(i,7)=Manoeuvers.Pedestrian.Women.Tables(i,7)+1;
+                case 2
+                    Manoeuvers.Pedestrian.Men.Tables(i,7)=Manoeuvers.Pedestrian.Men.Tables(i,7)+1;
+            end
+            if Age(j)<30
+                Manoeuvers.Pedestrian.Young.Tables(i,7)=Manoeuvers.Pedestrian.Young.Tables(i,7)+1;
+            else
+                Manoeuvers.Pedestrian.Old.Tables(i,7)=Manoeuvers.Pedestrian.Old.Tables(i,7)+1;
+            end
+            if strcmp(Origin(j),'NL')==1
+                Manoeuvers.Pedestrian.NL.Tables(i,7)=Manoeuvers.Pedestrian.NL.Tables(i,7)+1;
+            end
+            if strcmp(Origin(j),'CA')==1
+                Manoeuvers.Pedestrian.CA.Tables(i,7)=Manoeuvers.Pedestrian.CA.Tables(i,7)+1;
+            end
+        % right & steady
+        elseif Manoeuvers.Pedestrian.All.Direction(j,i)==2 && Manoeuvers.Pedestrian.All.Speed(j,i)==3
+            Manoeuvers.Pedestrian.All.Tables(i,8)=Manoeuvers.Pedestrian.All.Tables(i,8)+1;
+            switch Gender(j)
+                case 1
+                    Manoeuvers.Pedestrian.Women.Tables(i,8)=Manoeuvers.Pedestrian.Women.Tables(i,8)+1;
+                case 2
+                    Manoeuvers.Pedestrian.Men.Tables(i,8)=Manoeuvers.Pedestrian.Men.Tables(i,8)+1;
+            end
+            if Age(j)<30
+                Manoeuvers.Pedestrian.Young.Tables(i,8)=Manoeuvers.Pedestrian.Young.Tables(i,8)+1;
+            else
+                Manoeuvers.Pedestrian.Old.Tables(i,8)=Manoeuvers.Pedestrian.Old.Tables(i,8)+1;
+            end
+            if strcmp(Origin(j),'NL')==1
+                Manoeuvers.Pedestrian.NL.Tables(i,8)=Manoeuvers.Pedestrian.NL.Tables(i,8)+1;
+            end
+            if strcmp(Origin(j),'CA')==1
+                Manoeuvers.Pedestrian.CA.Tables(i,8)=Manoeuvers.Pedestrian.CA.Tables(i,8)+1;
+            end
+        % straight & steady
+        else
+            Manoeuvers.Pedestrian.All.Tables(i,9)=Manoeuvers.Pedestrian.All.Tables(i,9)+1;
+            switch Gender(j)
+                case 1
+                    Manoeuvers.Pedestrian.Women.Tables(i,9)=Manoeuvers.Pedestrian.Women.Tables(i,9)+1;
+                case 2
+                    Manoeuvers.Pedestrian.Men.Tables(i,9)=Manoeuvers.Pedestrian.Men.Tables(i,9)+1;
+            end
+            if Age(j)<30
+                Manoeuvers.Pedestrian.Young.Tables(i,9)=Manoeuvers.Pedestrian.Young.Tables(i,9)+1;
+            else
+                Manoeuvers.Pedestrian.Old.Tables(i,9)=Manoeuvers.Pedestrian.Old.Tables(i,9)+1;
+            end
+            if strcmp(Origin(j),'NL')==1
+                Manoeuvers.Pedestrian.NL.Tables(i,9)=Manoeuvers.Pedestrian.NL.Tables(i,9)+1;
+            end
+            if strcmp(Origin(j),'CA')==1
+                Manoeuvers.Pedestrian.CA.Tables(i,9)=Manoeuvers.Pedestrian.CA.Tables(i,9)+1;
+            end
+        end
+    end
+end
+
+Manoeuvers.Pedestrian.All.Tables=Manoeuvers.Pedestrian.All.Tables*100/389;
+Manoeuvers.Pedestrian.All.Tables(:,[1 3 2 7 9 8 4 6 5]);
+
+Manoeuvers.Pedestrian.Women.Tables=Manoeuvers.Pedestrian.Women.Tables*100/174;
+Manoeuvers.Pedestrian.Women.Tables(:,[1 3 2 7 9 8 4 6 5]);
+
+Manoeuvers.Pedestrian.Men.Tables=Manoeuvers.Pedestrian.Men.Tables*100/215;
+Manoeuvers.Pedestrian.Men.Tables(:,[1 3 2 7 9 8 4 6 5]);
+
+Manoeuvers.Pedestrian.Young.Tables=Manoeuvers.Pedestrian.Young.Tables*100/191;
+Manoeuvers.Pedestrian.Young.Tables(:,[1 3 2 7 9 8 4 6 5]);
+
+Manoeuvers.Pedestrian.Old.Tables=Manoeuvers.Pedestrian.Old.Tables*100/198;
+Manoeuvers.Pedestrian.Old.Tables(:,[1 3 2 7 9 8 4 6 5]);
+
+Manoeuvers.Pedestrian.NL.Tables=Manoeuvers.Pedestrian.NL.Tables*100/97;
+Manoeuvers.Pedestrian.NL.Tables(:,[1 3 2 7 9 8 4 6 5]);
+
+Manoeuvers.Pedestrian.CA.Tables=Manoeuvers.Pedestrian.CA.Tables*100/79;
+Manoeuvers.Pedestrian.CA.Tables(:,[1 3 2 7 9 8 4 6 5]);
+
+figure
+for i=1:20
+    subplot(4,5,i)
+    x = [1 3];
+    y = [1 3];
+    image(x,y,transpose(reshape(Manoeuvers.Pedestrian.All.Tables(i,:),[3,3])))
+    l=1;
+    for j=1:3
+        for k=1:3
+            text(k,j,num2str(Manoeuvers.Pedestrian.All.Tables(i,l),'%.0f'),'Color','black','FontName','rockwell','FontSize',12,'HorizontalAlignment','center');%,'FontWeight','bold');
+            l=l+1;
+        end
+    end
+    colormap(flipud(pink))
+    %colorbar
+    axis off
+    box on
+    title(num2str(i),'FontName','rockwell','FontSize',14,'FontWeight','bold')
+end
+suptitle('Pedestrian - All (n=389)','FontName','rockwell')
+print('Pedestrian - All (n=389)','-bestfit','-dpdf')
+
+figure
+for i=1:20
+    subplot(4,5,i)
+    x = [1 3];
+    y = [1 3];
+    image(x,y,transpose(reshape(Manoeuvers.Pedestrian.Women.Tables(i,:),[3,3])))
+    l=1;
+    for j=1:3
+        for k=1:3
+            text(k,j,num2str(Manoeuvers.Pedestrian.Women.Tables(i,l),'%.0f'),'Color','black','FontName','rockwell','FontSize',12,'HorizontalAlignment','center');%,'FontWeight','bold');
+            l=l+1;
+        end
+    end
+    colormap(flipud(pink))
+    %colorbar
+    axis off
+    box on
+    title(num2str(i),'FontName','rockwell','FontSize',14,'FontWeight','bold')
+end
+suptitle('Pedestrian - Women (n=174)','FontName','rockwell')
+print('Pedestrian - Women (n=174)','-bestfit','-dpdf')
+
+figure
+for i=1:20
+    subplot(4,5,i)
+    x = [1 3];
+    y = [1 3];
+    image(x,y,transpose(reshape(Manoeuvers.Pedestrian.Men.Tables(i,:),[3,3])))
+    l=1;
+    for j=1:3
+        for k=1:3
+            text(k,j,num2str(Manoeuvers.Pedestrian.Men.Tables(i,l),'%.0f'),'Color','black','FontName','rockwell','FontSize',12,'HorizontalAlignment','center');%,'FontWeight','bold');
+            l=l+1;
+        end
+    end
+    colormap(flipud(pink))
+    %colorbar
+    axis off
+    box on
+    title(num2str(i),'FontName','rockwell','FontSize',14,'FontWeight','bold')
+end
+suptitle('Pedestrian - Men (n=215)','FontName','rockwell')
+print('Pedestrian - Men (n=215)','-bestfit','-dpdf')
+
+figure
+for i=1:20
+    subplot(4,5,i)
+    x = [1 3];
+    y = [1 3];
+    image(x,y,transpose(reshape(Manoeuvers.Pedestrian.Young.Tables(i,:),[3,3])))
+    l=1;
+    for j=1:3
+        for k=1:3
+            text(k,j,num2str(Manoeuvers.Pedestrian.Young.Tables(i,l),'%.0f'),'Color','black','FontName','rockwell','FontSize',12,'HorizontalAlignment','center');%,'FontWeight','bold');
+            l=l+1;
+        end
+    end
+    colormap(flipud(pink))
+    %colorbar
+    axis off
+    box on
+    title(num2str(i),'FontName','rockwell','FontSize',14,'FontWeight','bold')
+end
+suptitle('Pedestrian - < 30y.o. (n=191)','FontName','rockwell')
+print('Pedestrian - under 30yo (n=191)','-bestfit','-dpdf')
+
+figure
+for i=1:20
+    subplot(4,5,i)
+    x = [1 3];
+    y = [1 3];
+    image(x,y,transpose(reshape(Manoeuvers.Pedestrian.Old.Tables(i,:),[3,3])))
+    l=1;
+    for j=1:3
+        for k=1:3
+            text(k,j,num2str(Manoeuvers.Pedestrian.Old.Tables(i,l),'%.0f'),'Color','black','FontName','rockwell','FontSize',12,'HorizontalAlignment','center');%,'FontWeight','bold');
+            l=l+1;
+        end
+    end
+    colormap(flipud(pink))
+    %colorbar
+    axis off
+    box on
+    title(num2str(i),'FontName','rockwell','FontSize',14,'FontWeight','bold')
+end
+suptitle('Pedestrian - >= 30y.o. (n=198)','FontName','rockwell')
+print('Pedestrian - over 30yo (n=198)','-bestfit','-dpdf')
+
+figure
+for i=1:20
+    subplot(4,5,i)
+    x = [1 3];
+    y = [1 3];
+    image(x,y,transpose(reshape(Manoeuvers.Pedestrian.NL.Tables(i,:),[3,3])))
+    l=1;
+    for j=1:3
+        for k=1:3
+            text(k,j,num2str(Manoeuvers.Pedestrian.NL.Tables(i,l),'%.0f'),'Color','black','FontName','rockwell','FontSize',12,'HorizontalAlignment','center');%,'FontWeight','bold');
+            l=l+1;
+        end
+    end
+    colormap(flipud(pink))
+    %colorbar
+    axis off
+    box on
+    title(num2str(i),'FontName','rockwell','FontSize',14,'FontWeight','bold')
+end
+suptitle('Pedestrian - The Netherlands (n=97)','FontName','rockwell')
+print('Pedestrian - The Netherlands (n=97)','-bestfit','-dpdf')
+
+figure
+for i=1:20
+    subplot(4,5,i)
+    x = [1 3];
+    y = [1 3];
+    image(x,y,transpose(reshape(Manoeuvers.Pedestrian.CA.Tables(i,:),[3,3])))
+    l=1;
+    for j=1:3
+        for k=1:3
+            text(k,j,num2str(Manoeuvers.Pedestrian.CA.Tables(i,l),'%.0f'),'Color','black','FontName','rockwell','FontSize',12,'HorizontalAlignment','center');%,'FontWeight','bold');
+            l=l+1;
+        end
+    end
+    colormap(flipud(pink))
+    %colorbar
+    axis off
+    box on
+    title(num2str(i),'FontName','rockwell','FontSize',14,'FontWeight','bold')
+end
+suptitle('Pedestrian - Canada (n=79)','FontName','rockwell')
+print('Pedestrian - Canada (n=79)','-bestfit','-dpdf')
+
+%% CLEARING
+
+clear i j k l x y
